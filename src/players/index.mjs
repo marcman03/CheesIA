@@ -1,19 +1,22 @@
 // index.mjs
 import { Chess } from 'chess.js';
 import { RandomPlayer } from './random.mjs';
-import { ManualPlayer } from './manual.mjs';
+import { MinimaxPlayer } from './minimax.mjs';
 
-// Instanciar el juego de ajedrez
 const chess = new Chess();
 
-// Instanciar los jugadores (puedes cambiar estos para alternar entre tipos de jugadores)
-const whitePlayer = new RandomPlayer(chess);
-const blackPlayer = new RandomPlayer(chess);
+// Puedes cambiar los jugadores aquí según lo desees
+const whitePlayer = new MinimaxPlayer(chess, 3);  // Jugador Minimax
+const blackPlayer = new RandomPlayer(chess);     // Jugador Aleatorio
 
 function checkGameOver() {
   if (chess.isCheckmate()) {
     console.log('Checkmate!');
-    console.log(chess.turn() === 'b' ? 'White wins!' : 'Black wins!');
+    if (chess.turn() === 'b') {
+      console.log('White wins!');
+    } else {
+      console.log('Black wins!');
+    }
     return true;
   } else if (chess.isDraw()) {
     if (chess.isStalemate()) {
@@ -31,17 +34,15 @@ function checkGameOver() {
 }
 
 function gameLoop() {
-  if (checkGameOver()) {
-    whitePlayer.close?.(); // Cierra si es un jugador manual
-    blackPlayer.close?.(); // Cierra si es un jugador manual
-    return;
+
+  if (chess.turn() === 'w') {
+    whitePlayer.makeMove();
+  } else {
+    blackPlayer.makeMove();
   }
 
-  const currentPlayer = chess.turn() === 'w' ? whitePlayer : blackPlayer;
-  currentPlayer.makeMove(() => {
-    console.log(chess.ascii());
-    gameLoop(); // Continuar con el siguiente movimiento
-  });
+  console.log(chess.ascii());
+  setTimeout(gameLoop, 500); // Hace una pausa para mostrar el tablero
 }
 
 console.log('Starting game...');
