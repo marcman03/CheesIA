@@ -2,7 +2,9 @@
   "name": "chessia",
   "version": "1.0.0",
   "description": "IA chess player",
+  "type":"module",
   "main": "index.js",
+  
   "scripts": {
     "test": "testing"
   },
@@ -21,6 +23,7 @@
   "homepage": "https://github.com/marcman03/CheesIA#readme",
   "dependencies": {
     "chess.js": "1.0.0-beta.7",
+    "express": "^4.19.2",
     "readline": "^1.3.0"
   }
 }
