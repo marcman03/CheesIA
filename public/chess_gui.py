@@ -18,7 +18,7 @@ class App():
         self.drawBoard()
 
     def __call__(self):
-        self.updateBoard()
+        self.board.after(500, self.updateBoard)  # Llama a updateBoard después de que la ventana se haya creado
         self.board.mainloop()
 
     def drawBoard(self):
@@ -31,37 +31,38 @@ class App():
 
     def loadImages(self):
         pieces = ["wr", "wn", "wb", "wq", "wk", "wp", 
-                "br", "bn", "bb", "bq", "bk", "bp"]
+                  "br", "bn", "bb", "bq", "bk", "bp"]
         for piece in pieces:
             image = Image.open(f"public/images/{piece}.png")
             image = image.resize((self.L_SQUARE, self.L_SQUARE), Image.Resampling.LANCZOS)
             self.images[piece] = ImageTk.PhotoImage(image)
 
     def updateBoard(self):
-        while True:
-            filepath = os.path.join("src", "players", "board_state.json")
-            with open(filepath, "r") as file:
-                board_state = json.load(file)
-            
-            position = board_state["position"].split(' ')[0]
-            rows = position.split('/')
-            self.gui.delete("pieces")
+        if not self.gui.winfo_exists():
+            return  # Verifica si el Canvas existe antes de continuar
+        filepath = os.path.join("src", "players", "board_state.json")
+        with open(filepath, "r") as file:
+            board_state = json.load(file)
+        
+        position = board_state["position"].split(' ')[0]
+        rows = position.split('/')
+        self.gui.delete("pieces")
 
-            for i, row in enumerate(rows):
-                col = 0
-                for char in row:
-                    if char.isdigit():
-                        col += int(char)
-                    else:
-                        color = 'w' if char.isupper() else 'b'
-                        piece = char.lower()
-                        self.gui.create_image(col * self.L_SQUARE, i * self.L_SQUARE, 
-                                              image=self.images[color + piece], 
-                                              anchor="nw", tags="pieces")
-                        col += 1
-            
-            self.board.update()
-            time.sleep(0.5)  # Actualiza cada medio segundo
+        for i, row in enumerate(rows):
+            col = 0
+            for char in row:
+                if char.isdigit():
+                    col += int(char)
+                else:
+                    color = 'w' if char.isupper() else 'b'
+                    piece = char.lower()
+                    self.gui.create_image(col * self.L_SQUARE, i * self.L_SQUARE, 
+                                          image=self.images[color + piece], 
+                                          anchor="nw", tags="pieces")
+                    col += 1
+        
+        self.board.update()
+        self.board.after(500, self.updateBoard)  # Programa la próxima actualización después de 500 ms
 
 if __name__ == "__main__":
     guiBoard = App(70)

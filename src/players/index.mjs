@@ -4,7 +4,7 @@ import { MinimaxPlayer } from './minimax.mjs';
 import fs from 'fs';
 
 const chess = new Chess();
-const whitePlayer = new MinimaxPlayer(chess, 3);
+const whitePlayer = new MinimaxPlayer(chess, 4);
 const blackPlayer = new RandomPlayer(chess);
 
 function writeBoardState() {
